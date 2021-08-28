@@ -48,7 +48,7 @@ def get_homeworks(current_timestamp):
 
 def send_message(message):
     """Отправляем сообщение в чат телеграмма."""
-    message = 'Проверяем статус ревью домашней работы'
+    message = 'Проверяем статус домашней работы'
     return bot.send_message(CHAT_ID, message)
 
 
