@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import time
@@ -68,6 +69,9 @@ def get_homeworks(current_timestamp):
         current_timestamp = int(time.time())
     else:
         logging.error(f'Неверное значение даты: {current_timestamp}')
+    if current_timestamp == int:
+        logging.error(f'Передаётся неверный тип даты: {current_timestamp}')
+        raise TypeError()
 
     try:
         homework_statuses = requests.get(URL, headers=HEADERS, params=payload)
@@ -75,7 +79,10 @@ def get_homeworks(current_timestamp):
         logging.error(f'Не удалось осуществить запрос, ошибка: {e}')
         raise UnexpectedResponseException()
 
-    homework_statuses_json = homework_statuses.json()
+    try:
+        homework_statuses_json = homework_statuses.json()
+    except json.JSONDecodeError:
+        logging.error('Ожидаемый ответ от сервера - Json формат')
     if 'error' in homework_statuses_json:
         raise UnexpectedResponseException()
     if 'code' in homework_statuses_json:
@@ -89,6 +96,8 @@ def send_message(message):
         return bot.send_message(chat_id=CHAT_ID, text=message)
     except error.TelegramError as e:
         logging.error(f'Телеграм не отвечает, перезвоните позже: {e}')
+    except ValueError as e:
+        logging.error(f'Ошибка в значении {e}')
 
 
 def main():
